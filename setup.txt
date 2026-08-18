@@ -1,0 +1,19 @@
+-- Repo setup -- 
+
+- creation of develop branch: for dev purposes
+- branch rules : for mandatory pull requests on develop and main branches
+- SonarQube code and security Analyzer: For automatic code quality scan
+- 
+
+
+-- Codespace setup --
+
+- VSCODE Extensions:
+    * code --install-extension eamodio.gitlens
+    * code --install-extension ms-azuretools.vscode-docker
+    * code --install-extension ritwickdey.liveserver
+
+- Dev tools
+    * Docker / Podman
+    * Minikube :  for single node K8s cluster
+    * Helm : For k8s manifests packaging
