@@ -1,0 +1,35 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    container_name: mosquitto-mqtt-broker
+    hostname: iot-telemetry-mosquitto
+    restart: always
+    ports:
+      - "1883:1883"    # MQTT
+      - "8883:8883"    # MQTTS (secure)
+      - "9001:9001"    # WebSockets
+    volumes:
+      - ./mosquitto-volume/config:/mosquitto/config
+      - ./mosquitto-volume/data:/mosquitto/data
+      - ./mosquitto-volume/log:/mosquitto/log
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 9001"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+
+# Uncomment the following section to enable Node-RED service for testing and visualization of MQTT messages.
+
+#   node-red:
+#     image: nodered/node-red:latest
+#     environment:
+#       - TZ=Europe/Paris
+#     ports:
+#       - "1880:1880"
+#     volumes:
+#       - node-red-data:/data
+
+# volumes:
+#   node-red-data:
