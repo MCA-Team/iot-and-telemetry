@@ -1,0 +1,16 @@
+name: IoT-Telemetry CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - task/4-setup-cicd-pipeline
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
