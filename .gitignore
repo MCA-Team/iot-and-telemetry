@@ -5,8 +5,8 @@ __pycache__/
 .venv/
 venv/
 .env
-# mosquitto-volume/log/*
-# mosquitto-volume/data/*
+mosquitto-volume/log/*
+mosquitto-volume/data/*
 
 # Windows system files
 Thumbs.db
