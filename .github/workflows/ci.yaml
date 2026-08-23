@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-  push:
-    branches:
-      - task/4-setup-cicd-pipeline
 
 jobs:
   scan:
