@@ -1,4 +1,5 @@
 services:
+  # MQTT Broker Service
   mosquitto:
     image: eclipse-mosquitto:2.1.2-alpine
     container_name: mosquitto-mqtt-broker
@@ -19,9 +20,12 @@ services:
       retries: 5
       start_period: 5s
 
-  
+  # InfluxDB 2.x time-series database Service
   influxdb2:
     image: influxdb:2
+    container_name: InfluxDB
+    hostname: iot-telemetry-ts-database
+    restart: always
     ports:
       - 8086:8086
     environment:
@@ -42,6 +46,13 @@ services:
       - type: volume
         source: influxdb2-config
         target: /etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+
 secrets:
   influxdb2-admin-username:
     file: ./influxdb2-volume/influxdb2-admin-username
@@ -49,6 +60,7 @@ secrets:
     file: ./influxdb2-volume/influxdb2-admin-password
   influxdb2-admin-token:
     file: ./influxdb2-volume/influxdb2-admin-token
+
 volumes:
   influxdb2-data:
   influxdb2-config:
