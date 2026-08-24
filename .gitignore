@@ -6,8 +6,11 @@ __pycache__/
 venv/
 .env
 mosquitto-volume/log/*
+!mosquitto-volume/log/.gitkeep
 mosquitto-volume/data/*
-
+!mosquitto-volume/data/.gitkeep
+influxdb2-volume/*
+!influxdb2-volume/.gitkeep
 # Windows system files
 Thumbs.db
 desktop.ini
