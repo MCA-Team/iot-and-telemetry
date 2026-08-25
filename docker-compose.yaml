@@ -1,0 +1,81 @@
+services:
+  # MQTT Broker Service
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    container_name: mosquitto-mqtt-broker
+    hostname: iot-telemetry-mosquitto
+    restart: always
+    ports:
+      - "1883:1883"    # MQTT
+      - "8883:8883"    # MQTTS (secure)
+      - "9001:9001"    # WebSockets
+    volumes:
+      - ./mosquitto-volume/config:/mosquitto/config
+      - ./mosquitto-volume/data:/mosquitto/data
+      - ./mosquitto-volume/log:/mosquitto/log
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 9001"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  # InfluxDB 2.x time-series database Service
+  influxdb2:
+    image: influxdb:2
+    container_name: InfluxDB
+    hostname: iot-telemetry-ts-database
+    restart: always
+    ports:
+      - 8086:8086
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME_FILE: /run/secrets/influxdb2-admin-username
+      DOCKER_INFLUXDB_INIT_PASSWORD_FILE: /run/secrets/influxdb2-admin-password
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN_FILE: /run/secrets/influxdb2-admin-token
+      DOCKER_INFLUXDB_INIT_ORG: iot-telemetry
+      DOCKER_INFLUXDB_INIT_BUCKET: init-bucket
+    secrets:
+      - influxdb2-admin-username
+      - influxdb2-admin-password
+      - influxdb2-admin-token
+    volumes:
+      - type: volume
+        source: influxdb2-data
+        target: /var/lib/influxdb2
+      - type: volume
+        source: influxdb2-config
+        target: /etc/influxdb2
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+
+secrets:
+  influxdb2-admin-username:
+    file: ./influxdb2-volume/influxdb2-admin-username
+  influxdb2-admin-password:
+    file: ./influxdb2-volume/influxdb2-admin-password
+  influxdb2-admin-token:
+    file: ./influxdb2-volume/influxdb2-admin-token
+
+volumes:
+  influxdb2-data:
+  influxdb2-config:
+
+
+# Uncomment the following section to enable Node-RED service for testing and visualization of MQTT messages.
+
+#   node-red:
+#     image: nodered/node-red:latest
+#     environment:
+#       - TZ=Europe/Paris
+#     ports:
+#       - "1880:1880"
+#     volumes:
+#       - node-red-data:/data
+
+# volumes:
+#   node-red-data:
